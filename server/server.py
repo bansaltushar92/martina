@@ -13,6 +13,14 @@ from twilio.twiml.voice_response import VoiceResponse
 
 load_dotenv()
 
+from supabase.client import Client, create_client
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import SupabaseVectorStore
+from langchain_community.docstore.document import Document
+
+supabase: Client = create_client(os.environ['SUPABASE_URL'], os.environ['SUPABASE_API_KEY'])
+embeddings = OpenAIEmbeddings()
+
 app = FastAPI()
 
 llm_client = LlmClient()
@@ -20,8 +28,15 @@ twilio_client = TwilioClient()
 
 print("Here is the retell key: ", os.environ['RETELL_AGENT_ID'])
 
+USER_ID = None
+CALL_CONTEXT = None
+CAMPAIGN_ID = None
+CALL_ID = None
+
+
 # Dictionary to hold multiple WebSocket connections
 # connections: Dict[str, WebSocket] = {}
+
 
 class ConnectionManager:
     def __init__(self):
@@ -81,6 +96,7 @@ async def handle_twilio_voice_webhook(request: Request, agent_id_path: str):
 @app.websocket("/llm-websocket/{call_id}")
 async def websocket_handler(websocket: WebSocket, call_id: str):
     global manager
+    global USER_ID
     await websocket.accept()
     print(f"Handle llm ws for: {call_id}")
 
@@ -109,6 +125,14 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
                     continue # new response needed, abondon this one    
     except Exception as e:
         print(f'LLM WebSocket error for {call_id}: {e}')
+        transcript = {'transcript': json.dumps(str(request), indent=4)}
+        document = Document(page_content=json.dumps(transcript),metadata={'cust_id': USER_ID, 'call_context': CALL_CONTEXT, 'campaign_id': CAMPAIGN_ID, 'call_id': CALL_ID})
+        try:
+            vector_store = SupabaseVectorStore.from_documents([document],embedding=embeddings, client=supabase, table_name="documents", query_name="match_documents")
+            print("This is the vector store: ", vector_store)
+        except Exception as err:
+            print("This is the document: ", document)
+            print("This is the error: ", err)
         print("Final Transcript: ", json.dumps(request, indent=4))
         
         await websocket.close(1002, e)
@@ -183,7 +207,32 @@ async def get():
     await trial()
     return {"status": "done"}
 
-@app.get("/test")
-async def test():
-    await manager.broadcast(f"Message trial")
-    return {"status": "done"}
+RETELL_AGENT_ID="e4ecf0aa3c82e91d06538d60168d9649"
+TWILIO_NUMBER = "+18339501419"
+
+from pydantic import BaseModel
+class Message(BaseModel):
+    phone: str
+    cust_id: int
+    call_id: int
+    campaign_id: int
+    call_context: str
+    
+
+@app.post("/call")
+async def call(message: Message):
+    global USER_ID
+    global CALL_CONTEXT
+    global CAMPAIGN_ID
+    global CALL_ID
+    USER_ID = message.cust_id
+    CALL_CONTEXT = message.call_context
+    CAMPAIGN_ID = message.campaign_id
+    CALL_ID = message.call_id
+    twilio_client = TwilioClient()
+    twilio_client.register_phone_agent("+18339501419", os.environ['RETELL_AGENT_ID'])
+    twilio_client.create_phone_call("+18339501419", message.phone, os.environ['RETELL_AGENT_ID'])
+    
+    # manager.twilio_client.create_phone_call(TWILIO_NUMBER, message.phone, RETELL_AGENT_ID)
+    
+    return {"message": message.phone}
