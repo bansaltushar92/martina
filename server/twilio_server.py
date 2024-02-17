@@ -2,11 +2,17 @@ from twilio.rest import Client
 import retellclient
 import os
 
+TWILIO_ACCOUNT_ID="AC380525ed074d20fdec063fd119c94454"
+TWILIO_AUTH_TOKEN="f91fbc54bd5acb22bac4de9a480d47c6"
+
+RETELL_API_KEY="1191cacf-8429-4d8b-96a8-ccdb0a75e676"
+RETELL_AGENT_ID="e4ecf0aa3c82e91d06538d60168d9649"
+
 class TwilioClient:
     def __init__(self):
-        self.client = Client(os.environ['TWILIO_ACCOUNT_ID'], os.environ['TWILIO_AUTH_TOKEN'])
+        self.client = Client(TWILIO_ACCOUNT_ID, TWILIO_AUTH_TOKEN)
         self.retell = retellclient.RetellClient(
-            api_key=os.environ['RETELL_API_KEY'],
+            api_key=RETELL_API_KEY,
         )
 
     # Create a new phone number and route it to use this server.

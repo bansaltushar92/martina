@@ -17,10 +17,12 @@ app = FastAPI()
 llm_client = LlmClient()
 twilio_client = TwilioClient()
 
+print("Here is the retell key: ", os.environ['RETELL_AGENT_ID'])
+
 # twilio_client.create_phone_number(213, os.environ['RETELL_AGENT_ID'])
-# twilio_client.register_phone_agent("+12133548310", os.environ['RETELL_AGENT_ID'])
+# twilio_client.register_phone_agent("+18339501419", os.environ['RETELL_AGENT_ID'])
 # twilio_client.delete_phone_number("+12133548310")
-# twilio_client.create_phone_call("+12133548310", "+13123156212", os.environ['RETELL_AGENT_ID'])
+# twilio_client.create_phone_call("+18339501419", "+18587293302", os.environ['RETELL_AGENT_ID'])
 
 @app.post("/twilio-voice-webhook/{agent_id_path}")
 async def handle_twilio_voice_webhook(request: Request, agent_id_path: str):
