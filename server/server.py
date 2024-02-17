@@ -43,7 +43,6 @@ class ConnectionManager:
             
 manager = ConnectionManager()
 
-
 # twilio_client.create_phone_number(213, os.environ['RETELL_AGENT_ID'])
 # twilio_client.register_phone_agent("+18339501419", os.environ['RETELL_AGENT_ID'])
 # twilio_client.delete_phone_number("+12133548310")
@@ -111,6 +110,7 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
     except Exception as e:
         print(f'LLM WebSocket error for {call_id}: {e}')
         print("Final Transcript: ", json.dumps(request, indent=4))
+        
         await websocket.close(1002, e)
     finally:
         try:
