@@ -26,21 +26,37 @@ import { toast } from "sonner"
 import { trpc } from "@/app/utils/trpc"
 import { MultiSelect } from "@/components/ui/mulit-select"
 import { Textarea } from "@/components/ui/textarea"
-
-interface Campaign {
-  name: string
-  href: string
-  initial: string
-  current: boolean
-}
+import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Label } from "@radix-ui/react-label"
+import { useParams, usePathname } from "next/navigation"
 
 export function CreateNewCall() {
+
+  const params = useParams()
+
+  const campaignId = params.campaignId
+
+  const [open, setOpen] = useState(false)
+
+  function closeSheet() {
+    setOpen(false)
+  }
+
   return (
     <>
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger>
           <Button size="sm" variant="default" className="">
-            New +
+            Start New Call
           </Button>
         </SheetTrigger>
         <SheetContent>
@@ -51,7 +67,7 @@ export function CreateNewCall() {
               assistant.
             </SheetDescription>
           </SheetHeader>
-          <AddCampaignForm />
+          <AddCampaignForm closeForm={closeSheet} campaignId={campaignId} />
         </SheetContent>
       </Sheet>
     </>
@@ -62,50 +78,59 @@ const formSchema = z.object({
   context: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  contacts: z.array(z.number().min(2, {
-    message: "Name must be at least 2 characters.",
-  }))
+  contacts: z.array(
+    z.number().min(2, {
+      message: "Name must be at least 2 characters.",
+    })
+  ),
 })
 
-function AddCampaignForm() {
-  const form = useForm({defaultValues: {context:"",contacts: []}})
+function AddCampaignForm({ closeForm, campaignId }: { closeForm: () => void, campaignId: string}) {
+  const form = useForm({ defaultValues: { context: "", contacts: [] } })
 
-  const {data,isLoading,isError} = trpc.getCustomers.useQuery()
-  console.log(data)
-
-  const formOptions = data!.map((customer) => ({
-    label: customer.name,
-    value: customer.id,
-  }))
-  
-  console.log("formOptions",formOptions)
+  const { data, isLoading, isError } = trpc.getCustomers.useQuery()
 
   const mutation = trpc.insertCall.useMutation({
     onSuccess: () => {
       form.reset()
       toast.success("Call created")
+      closeForm()
     },
     onError: (error) => {
       toast.error(error.message)
     },
   })
 
+
+  if (!data) {
+    return <div>Loading...</div>
+  }
+
+  const formOptions = data!.map((customer) => ({
+    label: customer.name,
+    value: customer.id,
+  }))
+
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("values",values)
     const newArray = values.contacts.map((contact) => {
-      return {customer_id: contact, call_context: values.context, campaign_id: 1}
+      return {
+        customer_id: contact,
+        call_context: values.context,
+        campaign_id: parseInt(campaignId),
+      }
     })
     mutation.mutate(newArray)
   }
 
-  if(!data){
+  if (!data) {
     return <div>Loading...</div>
   }
 
   return (
     <Form {...form}>
       <form className="space-y-8 pt-4" onSubmit={form.handleSubmit(onSubmit)}>
-      <FormField
+        <FormField
           control={form.control}
           name="context"
           render={({ field }) => (
@@ -122,13 +147,17 @@ function AddCampaignForm() {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="contacts"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Contacts to Call</FormLabel>
+              <FormLabel>
+                Contacts to Call{" "}
+                <span className="text-xs text-blue-400">
+                  (connected to Salesforce)
+                </span>
+              </FormLabel>
               <MultiSelect
                 selected={field.value}
                 options={formOptions}
@@ -137,7 +166,8 @@ function AddCampaignForm() {
               />
               <FormMessage />
               <FormDescription className="font-bold text-black">
-                Ensure you have gotten permission to contact these individuals prior to submitting.
+                Ensure you have gotten permission to contact these individuals
+                prior to submitting.
               </FormDescription>
             </FormItem>
           )}
@@ -145,6 +175,36 @@ function AddCampaignForm() {
         <Button type="submit" disabled={mutation.isPending}>
           Submit
         </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="m-4">Add Contact</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create new contact </DialogTitle>
+              <DialogDescription>
+                Create a new contact in Salesforce.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Name
+                </Label>
+                <Input id="name" value="" placeholder="Enter their name" className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="username" className="text-right">
+                  Number
+                </Label>
+                <Input id="number"  placeholder="+1555555555" className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit">Add Contact</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </form>
     </Form>
   )

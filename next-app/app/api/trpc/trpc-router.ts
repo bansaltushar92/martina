@@ -30,9 +30,18 @@ export const appRouter = t.router({
     .insert(input)
     .select('id')
 
-    
+    const call = input[0]
 
-    console.log("Supabase return", data)
+
+    const test = await fetch('http://127.0.0.1:8000/call', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({'phone': '+19092624716', "customer_id": call.customer_id, "call_context": call.call_context, "campaign_id": call.campaign_id, "call_id": data?.[0].id}),
+    })
+
+
     return data;
   }
   ),

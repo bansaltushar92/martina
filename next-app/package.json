@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/tailwindcss": "^0.2.0",
     "@heroicons/react": "^2.1.1",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -16,8 +17,10 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
+    "@remixicon/react": "^4.1.1",
     "@supabase/supabase-js": "^2.39.6",
     "@tanstack/react-query": "latest",
+    "@tremor/react": "^3.14.0",
     "@trpc/client": "next",
     "@trpc/next": "next",
     "@trpc/react-query": "next",
@@ -32,6 +35,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
+    "react-use-websocket": "^4.7.0",
     "sonner": "^1.4.0",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.1",
@@ -39,14 +43,15 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@tailwindcss/forms": "^0.5.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.0"
+    "typescript": "^5"
   }
 }

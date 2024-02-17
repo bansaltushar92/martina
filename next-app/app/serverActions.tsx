@@ -6,7 +6,6 @@ import { supabase } from "./db"
 
 export async function createCampaign(values: { name: string }) {
 
-  console.log("gets here")
 
   function getInitials(name: string): string {
     const words = name.split(" ");
@@ -29,14 +28,12 @@ export async function createCampaign(values: { name: string }) {
     initials: initials,
   }
 
-  console.log(rawFormData)
 
   const { data, error } = await supabase
     .from("campaigns")
     .insert([rawFormData])
     .select()
 
-  console.log(data, error)
 
   if (error) {
     throw error

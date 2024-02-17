@@ -132,7 +132,7 @@ async def websocket_endpoint(websocket: WebSocket):
             # Keep the connection open
             data = await websocket.receive_text()
             # You can also send data back to the client if needed
-            await manager.broadcast(f"Message text: {data}")
+            await manager.broadcast(f"Message text: {"test"}")
     except WebSocketDisconnect:
         print("Websocket is disconnected.")
         manager.disconnect(websocket)
@@ -181,4 +181,9 @@ async def get():
 @app.get("/trial")
 async def get():
     await trial()
+    return {"status": "done"}
+
+@app.get("/test")
+async def test():
+    await manager.broadcast(f"Message trial")
     return {"status": "done"}

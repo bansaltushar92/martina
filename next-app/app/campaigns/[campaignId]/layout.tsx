@@ -5,12 +5,12 @@ export default async function Layout({
   params
 }: Readonly<{
   children: React.ReactNode;
-  params: { id: string };
+  params: { campaignId: string };
 }>) {
 
-  const campaignId = params.id
+  const campaignId = params.campaignId
 
-  const {data, error} = await supabase.from('campaigns').select('id, name, initials, description').filter('id', 'eq', params.id)
+  const {data, error} = await supabase.from('campaigns').select('id, name, initials, description').filter('id', 'eq', campaignId)
 
 
   const campaign = data[0]

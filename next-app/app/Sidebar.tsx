@@ -36,13 +36,11 @@ export default async function Sidebar() {
     let limitReached = false
 
     if (campaigns.length >= 5) {
-      console.log("limit reached")
       limitReached = true
     }
 
 
 
-    console.log(campaigns)
 
   return (
     <div className="hidden xl:fixed xl:inset-y-0 xl:z-50 xl:flex xl:w-72 xl:flex-col bg-black">

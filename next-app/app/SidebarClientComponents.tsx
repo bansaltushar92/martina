@@ -183,7 +183,6 @@ export function MainPages() {
   .split("/feature-ideas")[0]
   .split("/home")[0];
 
-  console.log(newPath)
 
   const currentNavigation = navigation.map((item) => {
     return {

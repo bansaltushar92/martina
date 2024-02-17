@@ -30,8 +30,8 @@ class Message(BaseModel):
 async def call(message: Message):
 
     twilio_client = TwilioClient()
-    twilio_client.register_phone_agent("+18339501419", os.environ['RETELL_AGENT_ID'])
-    twilio_client.create_phone_call("+18339501419", message.phone, os.environ['RETELL_AGENT_ID'])
+    twilio_client.register_phone_agent(TWILIO_NUMBER, os.environ['RETELL_AGENT_ID'])
+    twilio_client.create_phone_call(TWILIO_NUMBER, message.phone, os.environ['RETELL_AGENT_ID'])
     
     # manager.twilio_client.create_phone_call(TWILIO_NUMBER, message.phone, RETELL_AGENT_ID)
     
