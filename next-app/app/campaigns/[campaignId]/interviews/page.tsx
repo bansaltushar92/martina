@@ -36,7 +36,7 @@ export default async function Page({ params }: { params: { campaignId: string } 
 export async function InterviewTable({heading, limit, campaignId}: {heading:string, limit?: number, campaignId: string}) {
   const { data, error } = await supabase
     .from("calls")
-    .select(`id, created_at, sentiment, customer("name")`)
+    .select(`id, created_at, sentiment, duration, customer("name")`)
     .filter("campaign_id", "eq", campaignId)
     .limit(limit ?? 25)
 
@@ -114,7 +114,7 @@ export async function InterviewTable({heading, limit, campaignId}: {heading:stri
               <td className="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
                 <div className="flex gap-x-3">
                   <div className="font-mono text-sm leading-6 text-black">
-                    {"00:30:00"}
+                    {item.duration}
                   </div>
                 </div>
               </td>

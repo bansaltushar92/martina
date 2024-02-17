@@ -96,8 +96,6 @@ export default async function Page({ params }: { params: { campaignId: string } 
 
 async function CustomerInterviewList({id}: {id: string}) {
 
-
-
   return <div className=" pt-11 px-8 w-full">
     <div className="flex w-full justify-between">
       <h2 className="text-2xl font-semibold leading-7 text-black">
