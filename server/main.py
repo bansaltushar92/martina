@@ -1,8 +1,10 @@
 import os
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
 from twilio_server import TwilioClient
 from pydantic import BaseModel
+from server import ConnectionManager, manager, trial
 
 load_dotenv()
 
@@ -35,3 +37,62 @@ async def call(message: Message):
     
     return {"message": message.phone}
 
+
+# @app.websocket("/martina-ws")
+# async def websocket_endpoint(websocket: WebSocket):
+#     await manager.connect(websocket)
+#     try:
+#         while True:
+#             # Keep the connection open
+#             data = await websocket.receive_text()
+#             # You can also send data back to the client if needed
+#             await manager.broadcast(f"Message text: {data}")
+#     except WebSocketDisconnect:
+#         print("Websocket is disconnected.")
+#         manager.disconnect(websocket)
+        
+        
+# html = """
+# <!DOCTYPE html>
+# <html>
+#     <head>
+#         <title>Chat</title>
+#     </head>
+#     <body>
+#         <h1>WebSocket Chat</h1>
+#         <form action="" onsubmit="sendMessage(event)">
+#             <input type="text" id="messageText" autocomplete="off"/>
+#             <button>Send</button>
+#         </form>
+#         <ul id='messages'>
+#         </ul>
+#         <script>
+#             var ws = new WebSocket("ws://0.0.0.0:8000/martina-ws");
+#             ws.onmessage = function(event) {
+#                 var messages = document.getElementById('messages')
+#                 var message = document.createElement('li')
+#                 var content = document.createTextNode(event.data)
+#                 message.appendChild(content)
+#                 messages.appendChild(message)
+#             };
+#             function sendMessage(event) {
+#                 var input = document.getElementById("messageText")
+#                 ws.send(input.value)
+#                 input.value = ''
+#                 event.preventDefault()
+#             }
+#         </script>
+#     </body>
+# </html>
+# """
+
+
+# @app.get("/")
+# async def get():
+#     global manager
+#     return HTMLResponse(html)
+
+# @app.get("/trial")
+# async def get():
+#     await trial()
+#     return {"status": "done"}
