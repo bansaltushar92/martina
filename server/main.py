@@ -10,8 +10,8 @@ load_dotenv()
 
 app = FastAPI()
 
-RETELL_AGENT_ID="e4ecf0aa3c82e91d06538d60168d9649"
-TWILIO_NUMBER = "+18339501419"
+RETELL_AGENT_ID=""
+TWILIO_NUMBER = ""
 
 class Message(BaseModel):
     phone: str

@@ -51,8 +51,14 @@ export default async function Sidebar() {
           <h2 className="text-white italic text-xs">
             User Feedback Simplified
           </h2>
+          <h2 className="text-white text-base font-bold pb-1 pt-4">
+            Welcome Tom
+          </h2>
+          <h2 className="text-gray-400 text-xs font-bold pb-4">
+            PM @ LinkedIn
+          </h2>
         </div>
-        <nav className="flex flex-1 flex-col">
+        <nav className="flex flex-1 flex-col py-16">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
             <MainPages/>
             <CampaignList teams={campaigns} limitReached />
