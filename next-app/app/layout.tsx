@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./Sidebar";
 import { Toaster } from "@/components/ui/sonner"
+import { TrpcProvider } from "./utils/trpc-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,10 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+      <TrpcProvider>
       <Sidebar/>
         {children}
         <Toaster />
-
+</TrpcProvider>
         </body>
     </html>
   );

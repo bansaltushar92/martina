@@ -10,6 +10,7 @@ import { z } from "zod"
 import { toast } from "sonner"
 import { createCampaign } from "./serverActions"
 import { useFormState } from "react-dom"
+import { trpc } from "./utils/trpc"
 
 
 interface Campaign {
@@ -77,14 +78,24 @@ const formSchema = z.object({
 function AddCampaignForm() {
   const form = useForm()
 
+  const mutation = trpc.getCampaigns.useMutation({
+    onSuccess: () => {
+      form.reset()
+      toast.success("Campaign created")
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    }
+  })
+
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await createCampaign(values)
-    toast.success("Campaign created")
+    mutation.mutate(values)
   }
 
    return (
     <Form {...form}>
-      <form className="space-y-8 pt-4" onSubmit={form.handleSubmit(()=>onSubmit)}>
+      <form className="space-y-8 pt-4" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
@@ -95,13 +106,13 @@ function AddCampaignForm() {
                 <Input placeholder="Your Campaign Name" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                This is your public display name. 
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={mutation.isPending}>Submit</Button>
       </form>
     </Form>
   )

@@ -8,6 +8,7 @@ import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { cn } from '@/lib/utils'
 import { AudioLinesIcon, BarChart2Icon, NewspaperIcon } from 'lucide-react'
 import { CampaignList } from './SidebarClientComponents'
+import { supabase } from './db'
 
 const navigation = [
   { name: 'Home', href: '/', icon: HomeIcon, current: true },
@@ -22,7 +23,17 @@ const teams = [
 
 
 
-export default function Sidebar() {
+export default async function Sidebar() {   
+  
+  
+const { data: campaigns, error } = await supabase
+.from('campaigns')
+.select('id,name,initials')
+
+console.log(campaigns)
+        
+
+
   return (
     <div className="hidden xl:fixed xl:inset-y-0 xl:z-50 xl:flex xl:w-72 xl:flex-col bg-black">
     {/* Sidebar component, swap this element with another sidebar if you like */}
@@ -53,7 +64,7 @@ export default function Sidebar() {
               ))}
             </ul>
           </li>
-          <CampaignList teams={teams}/>
+          <CampaignList teams={campaigns}/>
           <li className="-mx-6 mt-auto">
             <a
               href="#"
