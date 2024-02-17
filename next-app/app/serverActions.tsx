@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidatePath } from "next/cache";
 // import { Form } from "react-hook-form"
 import { supabase } from "./db"
 
@@ -42,4 +43,11 @@ export async function createCampaign(values: { name: string }) {
   }
 
   return data
+}
+
+
+export async function revalidateRoot() {
+  "use server"
+
+  revalidatePath("/", "layout")
 }

@@ -8,11 +8,41 @@ const t = initTRPC.create({
 });
 
 export const appRouter = t.router({
+  getCustomers: t.procedure.query(async () => {
+    const { data, error } = await supabase
+      .from("customer")
+      .select('id, name, number');
+
+    return data;
+  }
+  ),
+  insertCall: t.procedure
+  .input(
+    z.array(z.object({
+      customer_id: z.number(),
+      call_context: z.string(),
+      campaign_id: z.number(),
+    }))
+  )
+  .mutation(async ({input, ctx}) => {
+    const { data, error } = await supabase
+    .from('calls')
+    .insert(input)
+    .select('id')
+
+    
+
+    console.log("Supabase return", data)
+    return data;
+  }
+  ),
   getCampaigns: t.procedure
   .input(
     z.object({
       name: z.string(),
+      description: z.string(),
     }),
+
   )
   .mutation(async ({input, ctx}) => {
 
@@ -35,7 +65,7 @@ export const appRouter = t.router({
     const { data, error } = await supabase
     .from('campaigns')
     .insert([
-      { name: input.name, initials: initials },
+      { name: input.name, initials: initials, description: input.description},
     ])
     .select()
             

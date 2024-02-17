@@ -1,6 +1,7 @@
 import { supabase } from "@/app/db"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { CreateNewCall } from "../CreateCall"
 
 const stats = [
   { name: 'Number of deploys', value: '405' },
@@ -90,36 +91,16 @@ const dataItems = [
 
 export default async function Page({ params }: { params: { id: string } }) {
 
+  console.log(params)
   const {data, error} = await supabase.from('campaigns').select('id, name, initials, description').filter('id', 'eq', params.id)
   // console.log("campaignID", params.id)
 
   const campaign = data![0]
 
-
-
-
-
-
-
-
   return (
-    <div className="xl:pl-72 ">
+    <div className="">
       <main>
         <header>
-          <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-indigo-600 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
-            <div>
-              <div className="flex items-center gap-x-3">
-                <h1 className="flex gap-x-3 text-base leading-7">
-                  <span className="font-semibold text-white">{campaign.name}</span>
-                  {/* <span className="text-gray-600">/</span> */}
-                  {/* <span className="font-semibold text-white">{campaign.description}</span> */}
-                </h1>
-              </div>
-              <p className="mt-2 text-xs leading-6 text-white">
-                {campaign.description}
-              </p>
-            </div>
-          </div>
 
           {/* Stats */}
           {/* <div className="grid grid-cols-1 bg-[#F9F9F9]  sm:grid-cols-2 lg:grid-cols-4">
@@ -164,9 +145,9 @@ async function CustomerInterviewList({id}: {id: string}) {
   return <div className=" pt-11 px-8 w-full">
     <div className="flex w-full justify-between">
       <h2 className="text-2xl font-semibold leading-7 text-black">
-        Customer Interviews
+        Recent Interviews
       </h2>
-      <Button size="sm" variant="default" className="">New +</Button>
+      <CreateNewCall />
     </div>
     <table className="mt-6 w-full whitespace-nowrap text-left">
       <colgroup>
@@ -206,7 +187,7 @@ async function CustomerInterviewList({id}: {id: string}) {
             scope="col"
             className="hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
           >
-            Transcript Link
+            Transcript
           </th>
         </tr>
       </thead>
@@ -223,24 +204,24 @@ async function CustomerInterviewList({id}: {id: string}) {
             </td>
             <td className="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
               <div className="flex gap-x-3">
-                <div className="font-mono text-sm leading-6 text-gray-400">
+                <div className="font-mono text-sm leading-6 text-black">
                   {item.date}
                 </div>
               </div>
             </td>
             <td className="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
               <div className="flex gap-x-3">
-                <div className="font-mono text-sm leading-6 text-gray-400">
+                <div className="font-mono text-sm leading-6 text-black">
                   {item.duration}
                 </div>
               </div>
             </td>
 
-            <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-400 md:table-cell lg:pr-20">
+            <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-black md:table-cell lg:pr-20">
               {item.sentimentDescription}
             </td>
-            <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-400 sm:table-cell sm:pr-6 lg:pr-8">
-              <Button size="sm"> View </Button>
+            <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-black sm:table-cell sm:pr-6 lg:pr-8">
+              <Button size="sm" variant={"secondary"}> View </Button>
             </td>
           </tr>
         ))}
